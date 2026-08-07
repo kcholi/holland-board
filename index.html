@@ -137,6 +137,27 @@
   .sheet .opt:active { background: var(--orange-soft); }
   .sheet .opt .oe { font-size: 24px; }
 
+  .nameinput {
+    width: 100%; padding: 12px 14px; font-family: inherit; font-size: 17px; font-weight: 700;
+    border: 1.5px solid var(--line); border-radius: 12px; background: var(--card);
+    text-align: center; color: var(--ink);
+  }
+  .nameinput:focus { outline: none; border-color: var(--orange); }
+  .emojis { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 14px 0; }
+  .emoji-opt {
+    font-size: 24px; width: 46px; height: 46px; border-radius: 10px;
+    border: 1.5px solid var(--line); background: var(--card); cursor: pointer; padding: 0;
+  }
+  .emoji-opt.sel { border-color: var(--orange); background: var(--orange-soft); }
+  .savebtn {
+    width: 100%; padding: 13px; background: var(--orange); color: #fff; border: none;
+    border-radius: 12px; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer;
+  }
+  .cancelbtn {
+    width: 100%; padding: 10px; background: none; border: none; color: var(--muted);
+    font-family: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; margin-top: 6px;
+  }
+
   footer {
     position: fixed; bottom: 0; inset-inline: 0; background: var(--card);
     border-top: 1.5px solid var(--line); z-index: 40;
@@ -202,15 +223,29 @@
 <div class="overlay hidden" id="overlay">
   <div class="sheet">
     <h2>מי אתם?</h2>
-    <p>בחרו את המשפחה שלכם — הבחירה נשמרת במכשיר הזה</p>
+    <p>בחרו את המשפחה שלכם — את השם והסמל תוכלו לשנות מיד אחר כך</p>
     <div class="opts" id="famOpts"></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="renameOverlay">
+  <div class="sheet">
+    <h2>איך קוראים לקבוצה שלכם?</h2>
+    <p>השם והסמל יתעדכנו אצל כל המשפחות</p>
+    <input id="nameInput" maxlength="20" class="nameinput" placeholder="שם הקבוצה"/>
+    <div class="emojis" id="emojiRow"></div>
+    <button class="savebtn" id="saveName">שמירה</button>
+    <button class="cancelbtn" id="cancelName">ביטול</button>
   </div>
 </div>
 
 <footer>
   <div class="inner">
     <div class="who" id="who"></div>
-    <button id="switchFam">החלפת משפחה</button>
+    <div>
+      <button id="renameBtn">✏️ שם הקבוצה</button>
+      <button id="switchFam">החלפת משפחה</button>
+    </div>
   </div>
 </footer>
 <div class="toast" id="toast"></div>
@@ -353,6 +388,34 @@ async function bump(key, d) {
   if (key === 'stolen_word' && d > 0 && data === 12) toast('🎉 12 מילים גנובות — היעד הושג!');
 }
 
+const EMOJIS = ['🌷','🧀','🚲','🐄','🛶','🦁','🐬','🏰','🥞','🌬️','⚽','🚀'];
+let pendingEmoji = null;
+
+function openRename() {
+  const me = famById(myId);
+  if (!me) return;
+  pendingEmoji = me.emoji;
+  $('nameInput').value = me.name;
+  $('emojiRow').innerHTML = EMOJIS.map(em =>
+    `<button class="emoji-opt ${em === pendingEmoji ? 'sel' : ''}" data-e="${em}">${em}</button>`
+  ).join('');
+  $('renameOverlay').classList.remove('hidden');
+}
+
+async function saveRename() {
+  const name = $('nameInput').value.trim();
+  if (!name) { toast('צריך שם קבוצה'); return; }
+  const { error } = await sb.from('families')
+    .update({ name: name, emoji: pendingEmoji })
+    .eq('id', myId);
+  if (error) { toast('שגיאה — נסו שוב'); return; }
+  const me = famById(myId);
+  me.name = name; me.emoji = pendingEmoji;
+  $('renameOverlay').classList.add('hidden');
+  render();
+  toast('השם עודכן אצל כולם ✔');
+}
+
 function showPicker() {
   $('famOpts').innerHTML = families.map(f =>
     `<button class="opt" data-f="${f.id}"><span class="oe">${esc(f.emoji)}</span> ${esc(f.name)}</button>`
@@ -361,6 +424,16 @@ function showPicker() {
 }
 
 document.addEventListener('click', e => {
+  const eo = e.target.closest('.emoji-opt');
+  if (eo) {
+    pendingEmoji = eo.dataset.e;
+    document.querySelectorAll('.emoji-opt').forEach(x => x.classList.toggle('sel', x.dataset.e === pendingEmoji));
+    return;
+  }
+  if (e.target.id === 'saveName') { saveRename(); return; }
+  if (e.target.id === 'cancelName') { $('renameOverlay').classList.add('hidden'); return; }
+  if (e.target.id === 'renameBtn') { openRename(); return; }
+  if (e.target.id === 'switchFam') { showPicker(); return; }
   const st = e.target.closest('.st');
   if (st) { toggleStamp(parseInt(st.dataset.n)); return; }
   const b = e.target.closest('[data-bump]');
@@ -371,9 +444,9 @@ document.addEventListener('click', e => {
     localStorage.setItem('holland_family', myId);
     $('overlay').classList.add('hidden');
     render();
+    openRename();
     return;
   }
-  if (e.target.id === 'switchFam') showPicker();
 });
 
 // realtime + fallbacks
