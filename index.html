@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>לוח החותמות · ערכת המגלים</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌷</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf6ef;
+    --card: #ffffff;
+    --ink: #2b2622;
+    --muted: #8a8177;
+    --line: #e8e0d4;
+    --orange: #e0673c;
+    --orange-soft: #fbe9e0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 90px;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 14px; }
+
+  header { padding: 22px 0 6px; text-align: center; }
+  header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+  header .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .offline {
+    display: none; background: #b3402a; color: #fff; text-align: center;
+    font-size: 13px; padding: 6px; border-radius: 8px; margin-top: 8px;
+  }
+  .offline.show { display: block; }
+
+  /* standings */
+  .standings {
+    display: flex; gap: 8px; overflow-x: auto; padding: 14px 2px 6px;
+    scrollbar-width: none;
+  }
+  .standings::-webkit-scrollbar { display: none; }
+  .fam {
+    flex: 0 0 auto; min-width: 108px; background: var(--card);
+    border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 12px;
+    text-align: center; position: relative;
+  }
+  .fam.me { border-color: var(--fc); box-shadow: 0 0 0 2px var(--fc); }
+  .fam .femoji { font-size: 22px; }
+  .fam .fname { font-size: 13px; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+  .fam .fscore { font-size: 21px; font-weight: 900; color: var(--fc); line-height: 1.1; }
+  .fam .fscore small { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .fam .fextras { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .fam .crown { position: absolute; top: -10px; inset-inline-start: -4px; font-size: 16px; }
+
+  .section-title { font-size: 17px; font-weight: 900; margin: 18px 0 10px; display: flex; align-items: baseline; gap: 8px; }
+  .section-title span { font-size: 12.5px; color: var(--muted); font-weight: 400; }
+
+  /* super challenges */
+  .supers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 430px) { .supers { grid-template-columns: 1fr; } }
+  .super {
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px;
+  }
+  .super h3 { font-size: 15px; font-weight: 700; }
+  .super .desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .super .row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 10px; }
+  .super .val { font-size: 26px; font-weight: 900; min-width: 64px; text-align: center; }
+  .super .val small { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .super button {
+    width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--paper); font-size: 22px; font-weight: 700; color: var(--ink);
+    cursor: pointer; font-family: inherit;
+  }
+  .super button:active { background: var(--orange-soft); }
+  .bar { height: 7px; background: var(--line); border-radius: 4px; margin-top: 10px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--orange); border-radius: 4px; transition: width .4s; }
+  .goalhit { color: var(--orange); font-weight: 700; font-size: 12.5px; margin-top: 6px; display: none; }
+  .goalhit.show { display: block; }
+
+  /* stations */
+  .stations { display: flex; flex-direction: column; gap: 9px; }
+  .st {
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    transition: transform .08s;
+  }
+  .st:active { transform: scale(0.985); }
+  .st .icon { font-size: 26px; width: 34px; text-align: center; flex-shrink: 0; }
+  .st .mid { flex: 1; min-width: 0; }
+  .st .day { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .st .name { font-size: 15px; font-weight: 700; line-height: 1.25; }
+  .st .stamptext { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .st .dots { display: flex; gap: 4px; margin-top: 6px; }
+  .st .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .st .dot.on { background: var(--dc); }
+
+  .seal {
+    width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--muted); text-align: center; line-height: 1.1;
+    transition: all .2s;
+  }
+  .st.done .seal {
+    border: 2.5px solid var(--fc); color: var(--fc); font-size: 22px;
+    transform: rotate(-12deg); background: color-mix(in srgb, var(--fc) 10%, white);
+    animation: stampin .3s;
+  }
+  @keyframes stampin {
+    0% { transform: rotate(-12deg) scale(1.6); opacity: 0; }
+    100% { transform: rotate(-12deg) scale(1); opacity: 1; }
+  }
+  .st.done { border-color: color-mix(in srgb, var(--fc) 45%, var(--line)); }
+
+  /* family picker overlay */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(43,38,34,.55); z-index: 50;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .overlay.hidden { display: none; }
+  .sheet {
+    background: var(--paper); width: 100%; max-width: 680px;
+    border-radius: 22px 22px 0 0; padding: 24px 20px 34px;
+  }
+  .sheet h2 { font-size: 20px; font-weight: 900; text-align: center; }
+  .sheet p { text-align: center; color: var(--muted); font-size: 13.5px; margin: 4px 0 16px; }
+  .sheet .opts { display: flex; flex-direction: column; gap: 9px; }
+  .sheet .opt {
+    display: flex; align-items: center; gap: 12px; background: var(--card);
+    border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 16px;
+    font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%;
+    color: var(--ink);
+  }
+  .sheet .opt:active { background: var(--orange-soft); }
+  .sheet .opt .oe { font-size: 24px; }
+
+  footer {
+    position: fixed; bottom: 0; inset-inline: 0; background: var(--card);
+    border-top: 1.5px solid var(--line); z-index: 40;
+  }
+  footer .inner {
+    max-width: 680px; margin: 0 auto; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  footer .who { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+  footer .who .wdot { width: 12px; height: 12px; border-radius: 50%; background: var(--fc); }
+  footer button {
+    border: none; background: none; color: var(--muted); font-size: 13px;
+    text-decoration: underline; cursor: pointer; font-family: inherit;
+  }
+  .toast {
+    position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; font-size: 13.5px; padding: 9px 18px;
+    border-radius: 20px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 60;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🌷 לוח החותמות</h1>
+    <div class="sub">ערכת המגלים · הולנד · 9–21 באוגוסט 2026</div>
+    <div class="offline" id="offline">אין חיבור — מנסה להתחבר מחדש…</div>
+  </header>
+
+  <div class="standings" id="standings"></div>
+
+  <div class="section-title">אתגר־העל <span>רץ לאורך כל החופשה</span></div>
+  <div class="supers">
+    <div class="super">
+      <h3>🗣️ המילה שגנבתי</h3>
+      <div class="desc">מילה הולנדית ששמעתם ברחוב, לא מהטבלה. היעד: 12</div>
+      <div class="row">
+        <button data-bump="stolen_word" data-d="1">+</button>
+        <div class="val" id="val-stolen_word">0<small> / 12</small></div>
+        <button data-bump="stolen_word" data-d="-1">−</button>
+      </div>
+      <div class="bar"><i id="bar-stolen_word" style="width:0%"></i></div>
+      <div class="goalhit" id="goal-stolen_word">🎉 הגעתם ל־12! כל מילה מכאן היא בונוס</div>
+    </div>
+    <div class="super">
+      <h3>📸 תמונת היום</h3>
+      <div class="desc">תמונה אחת ביום לכל ילד — לאלבום של 12. התמונות בוואטסאפ</div>
+      <div class="row">
+        <button data-bump="photo_of_day" data-d="1">+</button>
+        <div class="val" id="val-photo_of_day">0<small> ימים</small></div>
+        <button data-bump="photo_of_day" data-d="-1">−</button>
+      </div>
+      <div class="bar"><i id="bar-photo_of_day" style="width:0%"></i></div>
+    </div>
+  </div>
+
+  <div class="section-title">19 התחנות <span>לוחצים כדי להחתים</span></div>
+  <div class="stations" id="stations"></div>
+</div>
+
+<div class="overlay hidden" id="overlay">
+  <div class="sheet">
+    <h2>מי אתם?</h2>
+    <p>בחרו את המשפחה שלכם — הבחירה נשמרת במכשיר הזה</p>
+    <div class="opts" id="famOpts"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="inner">
+    <div class="who" id="who"></div>
+    <button id="switchFam">החלפת משפחה</button>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL = 'https://errcyqsxcjiarnxbyjld.supabase.co';
+const SB_KEY = 'sb_publishable_-FD8pAU07GYv6XaJacd4LA_flpGKE5W';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+const STATIONS = [
+  {n:1,  day:'יום 9 · הארלם',    name:'כיכר חרוטה מרקט',        stamp:'מצאתי שלושה בתים מספרים', e:'🏠'},
+  {n:2,  day:'יום 10',            name:'קורפוס — מסע בגוף האדם', stamp:'שאלתי שלוש שאלות',        e:'🫀'},
+  {n:3,  day:'יום 10',            name:'מדורודאם',                stamp:'בחרתי בניין למשימה',       e:'🏘️'},
+  {n:4,  day:'יום 11',            name:'זאנסה סכאנס והשייט',     stamp:'ניחשתי סיבובים וספרתי',   e:'🌬️'},
+  {n:5,  day:'יום 11',            name:'בוטיק השוקולד',           stamp:'הכנתי שוקולד בעצמי',      e:'🍫'},
+  {n:6,  day:'יום 11',            name:'This is Holland',          stamp:'עפתי מעל הולנד',           e:'🛫'},
+  {n:7,  day:'יום 11 · ערב',      name:'שוק הגבינות באלקמאר',    stamp:'בחרתי צוות ועקבתי',       e:'🧀'},
+  {n:8,  day:'יום 12',            name:'הדולפינריום',             stamp:'חמש דקות של תצפית',       e:'🐬'},
+  {n:9,  day:'יום 12',            name:'עמי ותמי',                stamp:'הזמנתי לבד בהולנדית',     e:'🥞'},
+  {n:10, day:'יום 12',            name:'פארק החבלים',             stamp:'עשיתי מסלול אחד יותר',    e:'🧗'},
+  {n:11, day:'יום 13',            name:'טירת דה האר',             stamp:'פתרתי את חיפוש המטמון',   e:'🏰'},
+  {n:12, day:'יום 14',            name:'אפטלינג',                 stamp:'סימנתי מתקן אומץ',        e:'🎠'},
+  {n:13, day:'ימים 15–16',        name:'ספארי ביקסה ברחן',       stamp:'רשמתי יומן ספארי',        e:'🦁'},
+  {n:14, day:'יום 17',            name:'הנסיעה הגדולה צפונה',    stamp:'ניחשתי שעת הגעה',         e:'🚗'},
+  {n:15, day:'יום 18',            name:'חיטהורן',                 stamp:'ספרתי גשרים',              e:'🛶'},
+  {n:16, day:'ימים 19–20',        name:'הוף פאן סאקסן',           stamp:'ניצחתי בתחרות אחת',       e:'🏆'},
+  {n:17, day:'יום 20',            name:'המוזיאון הפתוח',          stamp:'סיפרתי יום בחיים',        e:'🚋'},
+  {n:18, day:'יום 20',            name:'אופניים לבנים — הפארק הלאומי', stamp:'עצרתי שלוש עצירות', e:'🚲'},
+  {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦'},
+];
+
+let families = [];
+let stamps = [];      // {family_id, station}
+let counters = [];    // {family_id, key, value}
+let myId = parseInt(localStorage.getItem('holland_family') || '0') || null;
+let busy = new Set(); // stations mid-flight
+
+const $ = id => document.getElementById(id);
+const famById = id => families.find(f => f.id === id);
+const myColor = () => (famById(myId) || {}).color || '#e0673c';
+const stampCount = fid => stamps.filter(s => s.family_id === fid).length;
+const counterVal = (fid, key) => (counters.find(c => c.family_id === fid && c.key === key) || {}).value || 0;
+const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._h);
+  toast._h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+async function fetchAll() {
+  const [f, s, c] = await Promise.all([
+    sb.from('families').select('*').order('id'),
+    sb.from('stamps').select('family_id, station'),
+    sb.from('counters').select('family_id, key, value'),
+  ]);
+  if (f.error || s.error || c.error) { $('offline').classList.add('show'); return; }
+  $('offline').classList.remove('show');
+  families = f.data; stamps = s.data; counters = c.data;
+  render();
+}
+
+function render() {
+  if (!families.length) return;
+  document.documentElement.style.setProperty('--fc', myColor());
+
+  // standings — sorted by stamps, stable by id
+  const leader = Math.max(...families.map(f => stampCount(f.id)));
+  const sorted = [...families].sort((a, b) => stampCount(b.id) - stampCount(a.id) || a.id - b.id);
+  $('standings').innerHTML = sorted.map(f => {
+    const n = stampCount(f.id);
+    return `<div class="fam ${f.id === myId ? 'me' : ''}" style="--fc:${esc(f.color)}">
+      ${n === leader && n > 0 ? '<div class="crown">👑</div>' : ''}
+      <div class="femoji">${esc(f.emoji)}</div>
+      <div class="fname">${esc(f.name)}</div>
+      <div class="fscore">${n}<small> / 19</small></div>
+      <div class="fextras">🗣️ ${counterVal(f.id, 'stolen_word')}/12 · 📸 ${counterVal(f.id, 'photo_of_day')}</div>
+    </div>`;
+  }).join('');
+
+  // supers (mine)
+  const sw = counterVal(myId, 'stolen_word');
+  const pd = counterVal(myId, 'photo_of_day');
+  $('val-stolen_word').innerHTML = `${sw}<small> / 12</small>`;
+  $('bar-stolen_word').style.width = Math.min(100, sw / 12 * 100) + '%';
+  $('goal-stolen_word').classList.toggle('show', sw >= 12);
+  $('val-photo_of_day').innerHTML = `${pd}<small> ימים</small>`;
+  $('bar-photo_of_day').style.width = Math.min(100, pd / 12 * 100) + '%';
+
+  // stations
+  $('stations').innerHTML = STATIONS.map(st => {
+    const mine = stamps.some(s => s.family_id === myId && s.station === st.n);
+    const dots = families.map(f =>
+      `<div class="dot ${stamps.some(s => s.family_id === f.id && s.station === st.n) ? 'on' : ''}" style="--dc:${esc(f.color)}"></div>`
+    ).join('');
+    return `<div class="st ${mine ? 'done' : ''}" data-n="${st.n}">
+      <div class="icon">${st.e}</div>
+      <div class="mid">
+        <div class="day">${esc(st.day)} · חותמת ${st.n}</div>
+        <div class="name">${esc(st.name)}</div>
+        <div class="stamptext">„${esc(st.stamp)}”</div>
+        <div class="dots">${dots}</div>
+      </div>
+      <div class="seal">${mine ? '✔' : 'עוד לא<br>הוחתם'}</div>
+    </div>`;
+  }).join('');
+
+  // footer
+  const me = famById(myId);
+  $('who').innerHTML = me ? `<div class="wdot"></div> ${esc(me.emoji)} ${esc(me.name)}` : '';
+}
+
+async function toggleStamp(n) {
+  if (!myId || busy.has(n)) return;
+  busy.add(n);
+  const had = stamps.some(s => s.family_id === myId && s.station === n);
+  // optimistic
+  if (had) stamps = stamps.filter(s => !(s.family_id === myId && s.station === n));
+  else stamps.push({ family_id: myId, station: n });
+  render();
+  const res = had
+    ? await sb.from('stamps').delete().eq('family_id', myId).eq('station', n)
+    : await sb.from('stamps').insert({ family_id: myId, station: n });
+  busy.delete(n);
+  if (res.error) { toast('שגיאה — נסו שוב'); fetchAll(); return; }
+  if (!had) toast(`חותמת ${n} הוחתמה! ✔`);
+  else toast(`חותמת ${n} בוטלה`);
+}
+
+async function bump(key, d) {
+  if (!myId) return;
+  const { data, error } = await sb.rpc('bump_counter', { fid: myId, k: key, delta: d });
+  if (error) { toast('שגיאה — נסו שוב'); return; }
+  const c = counters.find(c => c.family_id === myId && c.key === key);
+  if (c) c.value = data; else counters.push({ family_id: myId, key, value: data });
+  render();
+  if (key === 'stolen_word' && d > 0 && data === 12) toast('🎉 12 מילים גנובות — היעד הושג!');
+}
+
+function showPicker() {
+  $('famOpts').innerHTML = families.map(f =>
+    `<button class="opt" data-f="${f.id}"><span class="oe">${esc(f.emoji)}</span> ${esc(f.name)}</button>`
+  ).join('');
+  $('overlay').classList.remove('hidden');
+}
+
+document.addEventListener('click', e => {
+  const st = e.target.closest('.st');
+  if (st) { toggleStamp(parseInt(st.dataset.n)); return; }
+  const b = e.target.closest('[data-bump]');
+  if (b) { bump(b.dataset.bump, parseInt(b.dataset.d)); return; }
+  const opt = e.target.closest('.opt');
+  if (opt) {
+    myId = parseInt(opt.dataset.f);
+    localStorage.setItem('holland_family', myId);
+    $('overlay').classList.add('hidden');
+    render();
+    return;
+  }
+  if (e.target.id === 'switchFam') showPicker();
+});
+
+// realtime + fallbacks
+sb.channel('board')
+  .on('postgres_changes', { event: '*', schema: 'public' }, () => fetchAll())
+  .subscribe();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) fetchAll(); });
+setInterval(fetchAll, 45000);
+
+(async () => {
+  await fetchAll();
+  if (!myId || !famById(myId)) showPicker();
+})();
+</script>
+</body>
+</html>
