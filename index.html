@@ -103,6 +103,13 @@
   .st .dots { display: flex; gap: 4px; margin-top: 6px; }
   .st .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
   .st .dot.on { background: var(--dc); }
+  .st .wx {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 7px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: 20px; padding: 2.5px 10px; line-height: 1.4;
+  }
+  .st .wx .wt { color: var(--ink); font-weight: 700; }
 
   .seal {
     width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
@@ -284,6 +291,75 @@ const STATIONS = [
   {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦', nav:'Duinrell, Wassenaar'},
 ];
 
+// weather: dates + coordinates per station (n) — chip shows only for
+// activities from today until the end of the available forecast window
+const WX_META = {
+  1:  { d:['2026-08-09'],              lat:52.381, lon:4.637 }, // הארלם
+  2:  { d:['2026-08-10'],              lat:52.176, lon:4.472 }, // קורפוס
+  3:  { d:['2026-08-10'],              lat:52.099, lon:4.297 }, // מדורודאם
+  4:  { d:['2026-08-11'],              lat:52.474, lon:4.816 }, // זאנסה סכאנס
+  5:  { d:['2026-08-11'],              lat:52.474, lon:4.816 }, // בוטיק השוקולד
+  6:  { d:['2026-08-11'],              lat:52.384, lon:4.914 }, // This is Holland
+  7:  { d:['2026-08-11'],              lat:52.632, lon:4.749 }, // אלקמאר
+  8:  { d:['2026-08-12'],              lat:52.352, lon:5.610 }, // דולפינריום
+  9:  { d:['2026-08-12'],              lat:52.297, lon:5.640 }, // עמי ותמי (ארמלו)
+  10: { d:['2026-08-12'],              lat:52.238, lon:5.711 }, // קלימבוס חרדרן
+  11: { d:['2026-08-13'],              lat:52.121, lon:4.986 }, // טירת דה האר
+  12: { d:['2026-08-14'],              lat:51.650, lon:5.043 }, // אפטלינג
+  13: { d:['2026-08-15','2026-08-16'], lat:51.523, lon:5.118 }, // ביקסה ברחן
+  14: { d:['2026-08-17'],              lat:52.955, lon:6.548 }, // הנסיעה צפונה
+  15: { d:['2026-08-18'],              lat:52.740, lon:6.077 }, // חיטהורן
+  16: { d:['2026-08-19','2026-08-20'], lat:52.955, lon:6.548 }, // הוף פאן סאקסן
+  17: { d:['2026-08-20'],              lat:52.009, lon:5.897 }, // המוזיאון הפתוח
+  18: { d:['2026-08-20'],              lat:52.095, lon:5.826 }, // הפארק הלאומי
+  19: { d:'today',                     lat:52.147, lon:4.388 }, // דוינרל — גיבוי, תמיד היום
+};
+const WX_DAYS = 7; // known forecast horizon
+let wx = {};       // station n -> {e, tmax, tmin, pp}
+let wxAt = 0;
+
+const WMO = c =>
+  c === 0 ? '☀️' : c <= 2 ? '🌤️' : c === 3 ? '☁️' : c <= 48 ? '🌫️' :
+  c <= 57 ? '🌦️' : c <= 67 ? '🌧️' : c <= 77 ? '🌨️' : c <= 82 ? '🌧️' :
+  c <= 86 ? '🌨️' : '⛈️';
+
+const nlToday = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' });
+
+async function fetchWeather() {
+  try {
+    const ns = Object.keys(WX_META);
+    const url = 'https://api.open-meteo.com/v1/forecast'
+      + '?latitude=' + ns.map(n => WX_META[n].lat).join(',')
+      + '&longitude=' + ns.map(n => WX_META[n].lon).join(',')
+      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'
+      + '&timezone=Europe%2FAmsterdam&forecast_days=' + WX_DAYS;
+    const r = await fetch(url);
+    if (!r.ok) return;
+    const data = await r.json();
+    const arr = Array.isArray(data) ? data : [data];
+    const today = nlToday();
+    const next = {};
+    ns.forEach((n, i) => {
+      const d = arr[i] && arr[i].daily;
+      if (!d || !d.time) return;
+      const meta = WX_META[n];
+      const wanted = meta.d === 'today' ? today : meta.d.find(x => x >= today);
+      if (!wanted) return;                    // activity already passed
+      const idx = d.time.indexOf(wanted);
+      if (idx === -1) return;                 // beyond available forecast data
+      next[n] = {
+        e: WMO(d.weather_code[idx]),
+        tmax: Math.round(d.temperature_2m_max[idx]),
+        tmin: Math.round(d.temperature_2m_min[idx]),
+        pp: d.precipitation_probability_max ? d.precipitation_probability_max[idx] : null,
+      };
+    });
+    wx = next;
+    wxAt = Date.now();
+    render();
+  } catch (e) { /* אין מזג אוויר — הלוח ממשיך לעבוד */ }
+}
+
 let families = [];
 let stamps = [];      // {family_id, station}
 let counters = [];    // {family_id, key, value}
@@ -350,6 +426,10 @@ function render() {
     const dots = families.map(f =>
       `<div class="dot ${stamps.some(s => s.family_id === f.id && s.station === st.n) ? 'on' : ''}" style="--dc:${esc(f.color)}"></div>`
     ).join('');
+    const w = wx[st.n];
+    const wchip = w
+      ? `<div class="wx" dir="ltr"><span>${w.e}</span><span class="wt">${w.tmax}°</span><span>/ ${w.tmin}°</span>${w.pp != null ? `<span>· 💧${w.pp}%</span>` : ''}</div>`
+      : '';
     return `<div class="st ${mine ? 'done' : ''}" data-n="${st.n}">
       <div class="icon">${st.e}</div>
       <div class="mid">
@@ -359,6 +439,7 @@ function render() {
         <div class="navrow">
           <a class="navlink" target="_blank" rel="noopener" href="https://waze.com/ul?q=${encodeURIComponent(st.nav)}&navigate=yes">🚗 Waze</a>
           <a class="navlink" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(st.nav)}&travelmode=driving">🗺️ Maps</a>
+          ${wchip}
         </div>
         <div class="dots">${dots}</div>
       </div>
@@ -464,10 +545,16 @@ document.addEventListener('click', e => {
 sb.channel('board')
   .on('postgres_changes', { event: '*', schema: 'public' }, () => fetchAll())
   .subscribe();
-document.addEventListener('visibilitychange', () => { if (!document.hidden) fetchAll(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) return;
+  fetchAll();
+  if (Date.now() - wxAt > 1800000) fetchWeather(); // refresh forecast after 30 min
+});
 setInterval(fetchAll, 45000);
+setInterval(fetchWeather, 3 * 3600 * 1000);
 
 (async () => {
+  fetchWeather();
   await fetchAll();
   if (!myId || !famById(myId)) showPicker();
 })();
