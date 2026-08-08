@@ -94,6 +94,12 @@
   .st .day { font-size: 11px; color: var(--muted); font-weight: 500; }
   .st .name { font-size: 15px; font-weight: 700; line-height: 1.25; }
   .st .stamptext { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .navrow { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+  .navlink {
+    font-size: 11.5px; font-weight: 500; color: #2d6cdf; text-decoration: none;
+    border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; background: var(--paper);
+  }
+  .navlink:active { background: var(--orange-soft); }
   .st .dots { display: flex; gap: 4px; margin-top: 6px; }
   .st .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
   .st .dot.on { background: var(--dc); }
@@ -257,25 +263,25 @@ const SB_KEY = 'sb_publishable_-FD8pAU07GYv6XaJacd4LA_flpGKE5W';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 const STATIONS = [
-  {n:1,  day:'יום 9 · הארלם',    name:'כיכר חרוטה מרקט',        stamp:'מצאתי שלושה בתים מספרים', e:'🏠'},
-  {n:2,  day:'יום 10',            name:'קורפוס — מסע בגוף האדם', stamp:'שאלתי שלוש שאלות',        e:'🫀'},
-  {n:3,  day:'יום 10',            name:'מדורודאם',                stamp:'בחרתי בניין למשימה',       e:'🏘️'},
-  {n:4,  day:'יום 11',            name:'זאנסה סכאנס והשייט',     stamp:'ניחשתי סיבובים וספרתי',   e:'🌬️'},
-  {n:5,  day:'יום 11',            name:'בוטיק השוקולד',           stamp:'הכנתי שוקולד בעצמי',      e:'🍫'},
-  {n:6,  day:'יום 11',            name:'This is Holland',          stamp:'עפתי מעל הולנד',           e:'🛫'},
-  {n:7,  day:'יום 11 · ערב',      name:'שוק הגבינות באלקמאר',    stamp:'בחרתי צוות ועקבתי',       e:'🧀'},
-  {n:8,  day:'יום 12',            name:'הדולפינריום',             stamp:'חמש דקות של תצפית',       e:'🐬'},
-  {n:9,  day:'יום 12',            name:'עמי ותמי',                stamp:'הזמנתי לבד בהולנדית',     e:'🥞'},
-  {n:10, day:'יום 12',            name:'פארק החבלים',             stamp:'עשיתי מסלול אחד יותר',    e:'🧗'},
-  {n:11, day:'יום 13',            name:'טירת דה האר',             stamp:'פתרתי את חיפוש המטמון',   e:'🏰'},
-  {n:12, day:'יום 14',            name:'אפטלינג',                 stamp:'סימנתי מתקן אומץ',        e:'🎠'},
-  {n:13, day:'ימים 15–16',        name:'ספארי ביקסה ברחן',       stamp:'רשמתי יומן ספארי',        e:'🦁'},
-  {n:14, day:'יום 17',            name:'הנסיעה הגדולה צפונה',    stamp:'ניחשתי שעת הגעה',         e:'🚗'},
-  {n:15, day:'יום 18',            name:'חיטהורן',                 stamp:'ספרתי גשרים',              e:'🛶'},
-  {n:16, day:'ימים 19–20',        name:'הוף פאן סאקסן',           stamp:'ניצחתי בתחרות אחת',       e:'🏆'},
-  {n:17, day:'יום 20',            name:'המוזיאון הפתוח',          stamp:'סיפרתי יום בחיים',        e:'🚋'},
-  {n:18, day:'יום 20',            name:'אופניים לבנים — הפארק הלאומי', stamp:'עצרתי שלוש עצירות', e:'🚲'},
-  {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦'},
+  {n:1,  day:'יום 9 · הארלם',    name:'כיכר חרוטה מרקט',        stamp:'מצאתי שלושה בתים מספרים', e:'🏠', nav:'Grote Markt, Haarlem'},
+  {n:2,  day:'יום 10',            name:'קורפוס — מסע בגוף האדם', stamp:'שאלתי שלוש שאלות',        e:'🫀', nav:'Corpus Experience, Oegstgeest'},
+  {n:3,  day:'יום 10',            name:'מדורודאם',                stamp:'בחרתי בניין למשימה',       e:'🏘️', nav:'Madurodam, Den Haag'},
+  {n:4,  day:'יום 11',            name:'זאנסה סכאנס והשייט',     stamp:'ניחשתי סיבובים וספרתי',   e:'🌬️', nav:'Zaanse Schans, Zaandam'},
+  {n:5,  day:'יום 11',            name:'בוטיק השוקולד',           stamp:'הכנתי שוקולד בעצמי',      e:'🍫', nav:'Kalverringdijk 25, Zaandam'},
+  {n:6,  day:'יום 11',            name:'This is Holland',          stamp:'עפתי מעל הולנד',           e:'🛫', nav:'This is Holland, Amsterdam'},
+  {n:7,  day:'יום 11 · ערב',      name:'שוק הגבינות באלקמאר',    stamp:'בחרתי צוות ועקבתי',       e:'🧀', nav:'Waagplein, Alkmaar'},
+  {n:8,  day:'יום 12',            name:'הדולפינריום',             stamp:'חמש דקות של תצפית',       e:'🐬', nav:'Dolfinarium, Harderwijk'},
+  {n:9,  day:'יום 12',            name:'עמי ותמי',                stamp:'הזמנתי לבד בהולנדית',     e:'🥞', nav:'Pannenkoekenhuis Hans en Grietje, Ermelo'},
+  {n:10, day:'יום 12',            name:'פארק החבלים',             stamp:'עשיתי מסלול אחד יותר',    e:'🧗', nav:'Klimbos Garderen'},
+  {n:11, day:'יום 13',            name:'טירת דה האר',             stamp:'פתרתי את חיפוש המטמון',   e:'🏰', nav:'Kasteel de Haar, Haarzuilens'},
+  {n:12, day:'יום 14',            name:'אפטלינג',                 stamp:'סימנתי מתקן אומץ',        e:'🎠', nav:'Efteling, Kaatsheuvel'},
+  {n:13, day:'ימים 15–16',        name:'ספארי ביקסה ברחן',       stamp:'רשמתי יומן ספארי',        e:'🦁', nav:'Safaripark Beekse Bergen, Hilvarenbeek'},
+  {n:14, day:'יום 17',            name:'הנסיעה הגדולה צפונה',    stamp:'ניחשתי שעת הגעה',         e:'🚗', nav:'Hof van Saxen, Nooitgedacht'},
+  {n:15, day:'יום 18',            name:'חיטהורן',                 stamp:'ספרתי גשרים',              e:'🛶', nav:'Giethoorn'},
+  {n:16, day:'ימים 19–20',        name:'הוף פאן סאקסן',           stamp:'ניצחתי בתחרות אחת',       e:'🏆', nav:'Hof van Saxen, Nooitgedacht'},
+  {n:17, day:'יום 20',            name:'המוזיאון הפתוח',          stamp:'סיפרתי יום בחיים',        e:'🚋', nav:'Nederlands Openluchtmuseum, Arnhem'},
+  {n:18, day:'יום 20',            name:'אופניים לבנים — הפארק הלאומי', stamp:'עצרתי שלוש עצירות', e:'🚲', nav:'Nationaal Park De Hoge Veluwe'},
+  {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦', nav:'Duinrell, Wassenaar'},
 ];
 
 let families = [];
@@ -350,6 +356,10 @@ function render() {
         <div class="day">${esc(st.day)} · חותמת ${st.n}</div>
         <div class="name">${esc(st.name)}</div>
         <div class="stamptext">„${esc(st.stamp)}”</div>
+        <div class="navrow">
+          <a class="navlink" target="_blank" rel="noopener" href="https://waze.com/ul?q=${encodeURIComponent(st.nav)}&navigate=yes">🚗 Waze</a>
+          <a class="navlink" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(st.nav)}&travelmode=driving">🗺️ Maps</a>
+        </div>
         <div class="dots">${dots}</div>
       </div>
       <div class="seal">${mine ? '✔' : 'עוד לא<br>הוחתם'}</div>
@@ -424,6 +434,7 @@ function showPicker() {
 }
 
 document.addEventListener('click', e => {
+  if (e.target.closest('a')) return; // navigation links
   const eo = e.target.closest('.emoji-opt');
   if (eo) {
     pendingEmoji = eo.dataset.e;
