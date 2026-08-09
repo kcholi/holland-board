@@ -128,6 +128,52 @@
   }
   .st.done { border-color: color-mix(in srgb, var(--fc) 45%, var(--line)); }
 
+  /* expandable card details */
+  .st { cursor: pointer; }
+  .chev { display: inline-block; font-size: 10px; color: var(--muted); transition: transform .2s; margin-inline-start: 3px; }
+  .st.open .chev { transform: rotate(180deg); }
+  .st .more { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .st.open .more { display: block; }
+  .more .mh { font-size: 13px; font-weight: 900; margin-bottom: 4px; }
+  .more ul { padding-inline-start: 18px; margin: 0 0 10px; }
+  .more li { font-size: 13px; color: var(--ink); margin-bottom: 5px; line-height: 1.45; }
+  .more .q { font-size: 13px; line-height: 1.45; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 8px 11px; margin-bottom: 8px; }
+  .more .tip { font-size: 12.5px; color: #8a5a00; background: #fdf3dd; border: 1px solid #f0e0b8; border-radius: 10px; padding: 7px 11px; }
+
+  /* extras from the kit */
+  .extra {
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+    margin-bottom: 9px; overflow: hidden;
+  }
+  .extra summary {
+    list-style: none; cursor: pointer; padding: 13px 14px;
+    font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px;
+    user-select: none; -webkit-user-select: none;
+  }
+  .extra summary::-webkit-details-marker { display: none; }
+  .extra summary .xchev { margin-inline-start: auto; font-size: 11px; color: var(--muted); transition: transform .2s; }
+  .extra[open] summary .xchev { transform: rotate(180deg); }
+  .extra .xbody { padding: 0 14px 14px; }
+  .game { margin-bottom: 10px; }
+  .game b { font-size: 13.5px; }
+  .game p { font-size: 12.5px; color: var(--muted); line-height: 1.45; margin-top: 1px; }
+
+  .dict { width: 100%; border-collapse: collapse; }
+  .dict th { font-size: 11.5px; color: var(--muted); font-weight: 500; text-align: start; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+  .dict td { font-size: 13px; padding: 6px; border-bottom: 1px solid var(--line); }
+  .dict td.nl { font-weight: 700; direction: ltr; text-align: end; }
+  .dict tr:last-child td { border-bottom: none; }
+
+  .bingogrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .bcell {
+    border: 1.5px solid var(--line); border-radius: 10px; background: var(--paper);
+    font-family: inherit; font-size: 11px; line-height: 1.25; padding: 8px 4px;
+    min-height: 58px; color: var(--ink); cursor: pointer;
+  }
+  .bcell.on { background: var(--orange-soft); border-color: var(--orange); font-weight: 700; }
+  .bcell.on::before { content: '✔ '; color: var(--orange); }
+  .bingonote { font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+
   /* family picker overlay */
   .overlay {
     position: fixed; inset: 0; background: rgba(43,38,34,.55); z-index: 50;
@@ -229,8 +275,57 @@
     </div>
   </div>
 
-  <div class="section-title">19 התחנות <span>לוחצים על עיגול החותמת כדי להחתים</span></div>
+  <div class="section-title">19 התחנות <span>לוחצים על הכרטיס לעובדות · על העיגול כדי להחתים</span></div>
   <div class="stations" id="stations"></div>
+
+  <div class="section-title">עוד מהערכה</div>
+
+  <details class="extra">
+    <summary>🚗 משחקי רכב <span class="xchev">▾</span></summary>
+    <div class="xbody">
+      <div class="game"><b>ציד טחנות</b><p>נקודה לכל טחנת רוח שמישהו מזהה ראשון. טחנה ישנה מעץ = 3 נקודות, טורבינה מודרנית לבנה = נקודה אחת. הראשון ל־15 בוחר את המוזיקה.</p></div>
+      <div class="game"><b>שלוש אמיתות ושקר</b><p>כל אחד בתורו ממציא ארבע עובדות על הולנד — שלוש נכונות ואחת מומצאת. השאר מנחשים. מותר לגנוב עובדות מהכרטיסים.</p></div>
+      <div class="game"><b>מי אני — חיות ספארי</b><p>אחד חושב על חיה מהפארק, השאר שואלים רק שאלות כן/לא. מקסימום 20 שאלות. גרסה קשה: רק שאלות על התנהגות — אסור צבע וגודל.</p></div>
+      <div class="game"><b>הפרה השקטה</b><p>מי שרואה ראשון פרה בשדה צועק «!Koe» ומקבל נקודה. צעק ואין פרה — מינוס שתיים. משחק שמלמד ביטחון עצמי בדרך הקשה.</p></div>
+      <div class="game"><b>המילה של היום</b><p>כל בוקר בוחרים מילה הולנדית אחת מהמילון. מי שמצליח להשתמש בה נכון מול הולנדי אמיתי — חותמת בונוס.</p></div>
+      <div class="game"><b>הרדיו האנושי</b><p>עשר דקות שבהן אחד הילדים הוא ה"רדיו": מדווח מה רואים בחוץ בקול של שדרן ספורט. מותר להגזים. חובה להמשיך גם כשמשעמם.</p></div>
+    </div>
+  </details>
+
+  <details class="extra">
+    <summary>🟩 בינגו הולנד <span class="xchev">▾</span></summary>
+    <div class="xbody">
+      <div class="bingogrid" id="bingogrid"></div>
+      <div class="bingonote">מסמנים משבצת כשרואים. שורה שלמה = ניצחון קטן, כל הלוח = ניצחון גדול. הסימונים נשמרים בטלפון הזה בלבד.</div>
+    </div>
+  </details>
+
+  <details class="extra">
+    <summary>🗣️ מילון כיס <span class="xchev">▾</span></summary>
+    <div class="xbody">
+      <table class="dict">
+        <tr><th>הולנדית</th><th>איך אומרים</th><th>מה זה</th></tr>
+        <tr><td class="nl">Hallo</td><td>האלו</td><td>שלום</td></tr>
+        <tr><td class="nl">Dank je wel</td><td>דאנק יה וול</td><td>תודה רבה</td></tr>
+        <tr><td class="nl">Alsjeblieft</td><td>אלשיבליפט</td><td>בבקשה / קח</td></tr>
+        <tr><td class="nl">Lekker!</td><td>לקר</td><td>טעים! (וגם: כיף)</td></tr>
+        <tr><td class="nl">Kaas</td><td>קאס</td><td>גבינה</td></tr>
+        <tr><td class="nl">Fiets</td><td>פיטס</td><td>אופניים</td></tr>
+        <tr><td class="nl">Molen</td><td>מולן</td><td>טחנת רוח</td></tr>
+        <tr><td class="nl">Koe</td><td>קו</td><td>פרה</td></tr>
+        <tr><td class="nl">Poffertjes</td><td>פופרטיס</td><td>פנקייקים זעירים</td></tr>
+        <tr><td class="nl">Tot ziens</td><td>טוט זינס</td><td>להתראות</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details class="extra">
+    <summary>🌙 טקסים יומיים <span class="xchev">▾</span></summary>
+    <div class="xbody">
+      <div class="game"><b>הדבר הכי מוזר</b><p>כל ערב, לפני השינה, כל אחד אומר את הדבר הכי מוזר שראה היום. אסור לחזור על אותו סוג של דבר פעמיים.</p></div>
+      <div class="game"><b>המדריך התורן</b><p>כל יום ילד אחד אחראי: מקריא את הכרטיס ברכב, שואל את השאלה, ומכריז מתי המשימה הושלמה. מתחלפים.</p></div>
+    </div>
+  </details>
 </div>
 
 <div class="overlay hidden" id="overlay">
@@ -270,25 +365,118 @@ const SB_KEY = 'sb_publishable_-FD8pAU07GYv6XaJacd4LA_flpGKE5W';
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 const STATIONS = [
-  {n:1,  day:'יום 9 · הארלם',    name:'כיכר חרוטה מרקט',        stamp:'מצאתי שלושה בתים מספרים', e:'🏠', nav:'Grote Markt, Haarlem'},
-  {n:2,  day:'יום 10',            name:'קורפוס — מסע בגוף האדם', stamp:'שאלתי שלוש שאלות',        e:'🫀', nav:'Corpus Experience, Oegstgeest'},
-  {n:3,  day:'יום 10',            name:'מדורודאם',                stamp:'בחרתי בניין למשימה',       e:'🏘️', nav:'Madurodam, Den Haag'},
-  {n:4,  day:'יום 11',            name:'זאנסה סכאנס והשייט',     stamp:'ניחשתי סיבובים וספרתי',   e:'🌬️', nav:'Zaanse Schans, Zaandam'},
-  {n:5,  day:'יום 11',            name:'בוטיק השוקולד',           stamp:'הכנתי שוקולד בעצמי',      e:'🍫', nav:'Kalverringdijk 25, Zaandam'},
-  {n:6,  day:'יום 11',            name:'This is Holland',          stamp:'עפתי מעל הולנד',           e:'🛫', nav:'This is Holland, Amsterdam'},
-  {n:7,  day:'יום 11 · ערב',      name:'שוק הגבינות באלקמאר',    stamp:'בחרתי צוות ועקבתי',       e:'🧀', nav:'Waagplein, Alkmaar'},
-  {n:8,  day:'יום 12',            name:'הדולפינריום',             stamp:'חמש דקות של תצפית',       e:'🐬', nav:'Dolfinarium, Harderwijk'},
-  {n:9,  day:'יום 12',            name:'עמי ותמי',                stamp:'הזמנתי לבד בהולנדית',     e:'🥞', nav:'Pannenkoekenhuis Hans en Grietje, Ermelo'},
-  {n:10, day:'יום 12',            name:'פארק החבלים',             stamp:'עשיתי מסלול אחד יותר',    e:'🧗', nav:'Klimbos Garderen'},
-  {n:11, day:'יום 13',            name:'טירת דה האר',             stamp:'פתרתי את חיפוש המטמון',   e:'🏰', nav:'Kasteel de Haar, Haarzuilens'},
-  {n:12, day:'יום 14',            name:'אפטלינג',                 stamp:'סימנתי מתקן אומץ',        e:'🎠', nav:'Efteling, Kaatsheuvel'},
-  {n:13, day:'ימים 15–16',        name:'ספארי ביקסה ברחן',       stamp:'רשמתי יומן ספארי',        e:'🦁', nav:'Safaripark Beekse Bergen, Hilvarenbeek'},
-  {n:14, day:'יום 17',            name:'הנסיעה הגדולה צפונה',    stamp:'ניחשתי שעת הגעה',         e:'🚗', nav:'Hof van Saxen, Nooitgedacht'},
-  {n:15, day:'יום 18',            name:'חיטהורן',                 stamp:'ספרתי גשרים',              e:'🛶', nav:'Giethoorn'},
-  {n:16, day:'ימים 19–20',        name:'הוף פאן סאקסן',           stamp:'ניצחתי בתחרות אחת',       e:'🏆', nav:'Hof van Saxen, Nooitgedacht'},
-  {n:17, day:'יום 20',            name:'המוזיאון הפתוח',          stamp:'סיפרתי יום בחיים',        e:'🚋', nav:'Nederlands Openluchtmuseum, Arnhem'},
-  {n:18, day:'יום 20',            name:'אופניים לבנים — הפארק הלאומי', stamp:'עצרתי שלוש עצירות', e:'🚲', nav:'Nationaal Park De Hoge Veluwe'},
-  {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦', nav:'Duinrell, Wassenaar'},
+  {n:1,  day:'יום 9 · הארלם',    name:'כיכר חרוטה מרקט',        stamp:'מצאתי שלושה בתים מספרים', e:'🏠', nav:'Grote Markt, Haarlem',
+    f:['הכיכר הזאת היא לב העיר כבר יותר מ־700 שנה. פעם מכרו כאן בדים, דגים ובשר — כל סחורה בפינה משלה.',
+       'בכנסייה הגדולה שבכיכר, סינט־באבו, יש עוגב ענק שמוצרט ניגן עליו כשהיה בן 10. גיל של ילד.',
+       'ניו יורק נקראה פעם "הארלם" על שם העיר הזאת — ומשם קיבלה השכונה המפורסמת במנהטן את שמה.'],
+    q:'איך מסבירים למישהו מה זה "כיכר עיר" בלי להגיד את המילה כיכר? ומה הכיכר של השכונה שלנו בבית?'},
+  {n:2,  day:'יום 10',            name:'קורפוס — מסע בגוף האדם', stamp:'שאלתי שלוש שאלות',        e:'🫀', nav:'Corpus Experience, Oegstgeest',
+    f:['נכנסים דרך הברך ויוצאים דרך המוח. הבניין בנוי כמו גוף אדם ענק, בגובה של בערך בניין בן 11 קומות.',
+       'הלב שלכם פועם בערך 100,000 פעמים ביום. בלי שאתם מבקשים ממנו.',
+       'המעי הדק שלכם ארוך יותר מהמכונית שלנו — פי כמה. הוא פשוט מקופל.',
+       'בכל שנייה הגוף שלכם מייצר מיליוני תאים חדשים. גם עכשיו, כשאתם קוראים את זה.'],
+    q:'מה הדבר הכי מוזר שהגוף שלנו עושה בלי שביקשנו ממנו? עיטוש, פיהוק, צמרמורת, עור ברווז — למה בכלל?',
+    tip:'חשוך בפנים ויש רעשים חזקים. מי שלא אוהב — מותר להחזיק יד ולעצום עיניים, זה חלק מהחוויה.'},
+  {n:3,  day:'יום 10',            name:'מדורודאם',                stamp:'בחרתי בניין למשימה',       e:'🏘️', nav:'Madurodam, Den Haag',
+    f:['הכול בנוי בקנה מידה 1:25 — כלומר בן אדם בגובה שלכם יוצא כאן בערך בגובה אצבע.',
+       'הפארק נקרא על שם ג׳ורג׳ מדורו, בחור צעיר שנלחם בנאצים ולא שרד את המלחמה. ההורים שלו בנו את הפארק לזכרו.',
+       'הכסף מהכרטיסים הולך לעמותות לילדים — זה פארק שהוא גם עמותה.',
+       'הוא נפתח ב־1952, ומאז מוסיפים לו בניינים חדשים — כמו מפה של הולנד שממשיכה להתעדכן.'],
+    q:'למה דווקא קטן עושה לנו חשק להסתכל יותר טוב? מה היה קורה אם היו בונים את זה בגודל אמיתי?'},
+  {n:4,  day:'יום 11',            name:'זאנסה סכאנס והשייט',     stamp:'ניחשתי סיבובים וספרתי',   e:'🌬️', nav:'Zaanse Schans, Zaandam',
+    f:['באזור הזה עמדו פעם מאות טחנות רוח שעבדו יחד — זה נחשב לאזור התעשייה הראשון בעולם, מאות שנים לפני מפעלים ומכונות.',
+       'טחנת רוח היא בעצם מנוע. היו טחנות שטחנו קמח, אבל גם כאלה ששפשפו אבן לצבע, ניסרו עצי ענק וסחטו שמן.',
+       'את הכנפיים אפשר לסובב לכיוון הרוח. הטוחן היה מטפס וקורא את הרוח לפני שהתחיל לעבוד.',
+       'נעלי העץ (קלומפן) לא היו אופנה — הן היו מגפי בטיחות. עץ לא נרטב ולא נחתך בקלות.'],
+    q:'אם הרוח נעצרת — כל המפעל נעצר. איך אנשים תכננו יום עבודה כשהמנוע שלהם תלוי במזג האוויר? מה אנחנו היום תלויים בו בדיוק ככה?'},
+  {n:5,  day:'יום 11',            name:'בוטיק השוקולד',           stamp:'הכנתי שוקולד בעצמי',      e:'🍫', nav:'Kalverringdijk 25, Zaandam',
+    f:['שוקולד מתחיל כפרי. גרגרי הקקאו יושבים בתוך פרי בגודל של מלון קטן, בתוך ציפוי לבן ומתוק.',
+       'הפול עצמו מר לגמרי. הוא הופך לשוקולד רק אחרי תסיסה, ייבוש, קלייה וטחינה.',
+       'כשטוחנים קקאו הוא נהיה נוזלי בלי שהוספנו שום נוזל — כי בתוך הפול יש חמאה שנמסה מהחיכוך.',
+       'הולנד היא אחת המדינות שמעבדות הכי הרבה קקאו בעולם, למרות שעץ קקאו לא יכול לגדול פה בכלל.'],
+    q:'איך יכול להיות שמדינה בלי אף עץ קקאו היא מלכת השוקולד? רמז: נמלים, ספינות, וזה שפעם היה כאן הרבה כוח רוח בחינם.'},
+  {n:6,  day:'יום 11',            name:'This is Holland',          stamp:'עפתי מעל הולנד',           e:'🛫', nav:'This is Holland, Amsterdam',
+    f:['בערך רבע מהולנד נמצא מתחת לפני הים. אם היו מכבים את המשאבות, חלק מהערים היו מתחת למים.',
+       'ההולנדים ייבשו ימים שלמים ובנו עליהם ערים ושדות. יש כאן אדמה שהיא בעצם קרקעית ים.',
+       'יש בהולנד יותר אופניים מאנשים.'],
+    q:'מדינה שלמה שחיה מתחת לפני הים בזכות סוללות ומשאבות — זה אומץ או שיגעון? מה הייתם עושים אם הבית שלכם היה מתחת לגובה הים?'},
+  {n:7,  day:'יום 11 · ערב',      name:'שוק הגבינות באלקמאר',    stamp:'בחרתי צוות ועקבתי',       e:'🧀', nav:'Waagplein, Alkmaar',
+    f:['נושאי הגבינה הם גילדה שקיימת מאז 1593 — יותר מ־400 שנה של אותה עבודה בדיוק.',
+       'יש ארבע קבוצות, וכל אחת מזוהה לפי צבע הסרט על הכובע: צהוב, אדום, כחול וירוק.',
+       'האלונקה העמוסה בגבינות שוקלת עד 160 קילו. שני אנשים סוחבים אותה בהליכה מקפצת מיוחדת.',
+       'צריך בערך 10 ליטר חלב כדי לייצר קילו אחד של גבינה.'],
+    q:'למה ממשיכים לעשות את זה בדיוק ככה, כשיש מלגזות? מה עוד אנחנו עושים בבית בדרך הישנה, אף על פי שיש דרך מהירה יותר?'},
+  {n:8,  day:'יום 12',            name:'הדולפינריום',             stamp:'חמש דקות של תצפית',       e:'🐬', nav:'Dolfinarium, Harderwijk',
+    f:['דולפינים "רואים" בעזרת קול. הם שולחים צליל ומקשיבים להד שחוזר — ככה הם יודעים אם משהו רך, קשה, קרוב או רחוק.',
+       'דולפין ישן חצי מוח בכל פעם. החצי השני נשאר ער כדי להמשיך לנשום.',
+       'ניבי הוולרוס הם בעצם שיניים ענקיות שממשיכות לגדול כל החיים.',
+       'לכלב ים יש שפמים שמרגישים תנועות מים זעירות — הוא יכול לעקוב אחרי שובל של דג שעבר שם לפני דקה.'],
+    q:'אם הייתם בוחרים חוש־על אחד: סונאר של דולפין או שפמים של כלב ים? מה הייתם עושים איתו ביום רגיל בבית?'},
+  {n:9,  day:'יום 12',            name:'עמי ותמי',                stamp:'הזמנתי לבד בהולנדית',     e:'🥞', nav:'Pannenkoekenhuis Hans en Grietje, Ermelo',
+    f:['בהולנד פנקייק זו ארוחת ערב, לא קינוח. מזמינים אותו עם גבינה, בייקון או תפוח — ואוכלים בסכין ומזלג.',
+       'הגרסה הקטנה נקראת פופרטיס: כדורים זעירים שאופים במחבת עם גומות, מגישים עם חמאה ואבקת סוכר.',
+       'האגדה על עמי ותמי נכתבה בגרמניה על ידי האחים גרים, אבל בהולנד מכירים אותה בדיוק כמונו — רק בשמות אחרים.'],
+    q:'בסיפור, עמי ותמי מפזרים פירורים כדי לא ללכת לאיבוד — והציפורים אוכלות אותם. מה הייתם מפזרים במקום, שהיה מחזיק?'},
+  {n:10, day:'יום 12',            name:'פארק החבלים',             stamp:'עשיתי מסלול אחד יותר',    e:'🧗', nav:'Klimbos Garderen',
+    f:['הרתמה מחוברת לכבל שממשיך לאורך כל המסלול — גם אם תחליקו, אתם פשוט נתלים באוויר. אי אפשר ליפול.',
+       'הכי קשה זה לא הידיים. זה השרירים בבטן ובירכיים — הם אלה ששומרים על שיווי המשקל.',
+       'הטריק של מטפסים מנוסים: להסתכל קדימה על הנקודה שאליה הולכים, לא למטה על הרגליים.'],
+    q:'מה מפחיד יותר — הגובה עצמו, או הרגע שבו צריך להוריד רגל מהמדרגה? למה דווקא הרגע הזה?',
+    tip:'לרוב המסלולים צריך גובה 1.20 מ׳. אם לא מגיעים — יש מסלול קטן נפרד, וזה בסדר גמור.'},
+  {n:11, day:'יום 13',            name:'טירת דה האר',             stamp:'פתרתי את חיפוש המטמון',   e:'🏰', nav:'Kasteel de Haar, Haarzuilens',
+    f:['הטירה הייתה חורבה. מיליונר התחתן עם יורשת המשפחה ובנה אותה מחדש עם האדריכל שתכנן גם את הרייקסמוזיאום ואת תחנת הרכבת המרכזית של אמסטרדם.',
+       'כדי לפנות מקום לגן — הזיזו כפר שלם. הבתים נבנו מחדש קצת יותר רחוק.',
+       'יש כאן חפיר, גשרים מתרוממים, מגדלים, מבוך וחצר עם צבאים.',
+       'בונוס באוטרכט: מגדל הדום הוא מגדל הכנסייה הגבוה בהולנד — והוא עומד לבד, בלי הכנסייה שלו, כי סופה הרסה את החלק האמצעי לפני יותר מ־350 שנה.'],
+    q:'אם היו מזיזים את כל הרחוב שלנו כדי לפנות מקום לגינה של מישהו — מה היינו אומרים? יש דברים ששווה להזיז בשבילם כפר?'},
+  {n:12, day:'יום 14',            name:'אפטלינג',                 stamp:'סימנתי מתקן אומץ',        e:'🎠', nav:'Efteling, Kaatsheuvel',
+    f:['אפטלינג נפתח ב־1952 — לפני דיסנילנד. הוא אחד מפארקי השעשועים הוותיקים בעולם שעדיין פועלים.',
+       'יער האגדות תוכנן על ידי מאייר בשם אנטון פיק, ולכן הכול נראה כמו ציור מספר ולא כמו ציוד פארק.',
+       'פח האשפה המדבר, הולה בולה חיס, צועק "Papier hier!‏" — נייר לכאן. הוא באמת שואב את הזבל פנימה.',
+       'בסוף היום יש מופע מזרקות על האגם, עם מים, אור ומוזיקה. שווה לתפוס מקום מוקדם.'],
+    q:'מה עושה אגדה למפחידה — המפלצת, או הרגע לפני שרואים אותה? נסו לזהות ביער האגדות איפה בדיוק החביאו את הרגע הזה.'},
+  {n:13, day:'ימים 15–16',        name:'ספארי ביקסה ברחן',       stamp:'רשמתי יומן ספארי',        e:'🦁', nav:'Safaripark Beekse Bergen, Hilvarenbeek',
+    f:['זה פארק החיות הגדול בבנלוקס — יותר מ־1,500 חיות ובערך 170 מינים.',
+       'אריה זכר ישן עד 20 שעות ביממה. הלביאות הן אלה שצדות ברוב המקרים.',
+       'הכתמים של הג׳ירפה הם כמו טביעת אצבע: אין שתי ג׳ירפות עם אותה מפה.',
+       'הפסים של הזברה ייחודיים לכל אחת — וכנראה עוזרים לה דווקא נגד זבובים עוקצים, לא נגד טורפים.'],
+    q:'כשאנחנו יושבים במכונית והחיות מסתובבות חופשי — מי בעצם בכלוב? שאלה רצינית. נסו לענות בכנות.',
+    tip:'האכלת האריות: שבת 09:45.'},
+  {n:14, day:'יום 17',            name:'הנסיעה הגדולה צפונה',    stamp:'ניחשתי שעת הגעה',         e:'🚗', nav:'Hof van Saxen, Nooitgedacht',
+    f:['אתם חוצים היום כמעט את כל הולנד מדרום לצפון — ובכל זאת זה פחות מנסיעה מתל אביב לאילת.',
+       'הולנד קטנה בערך כמו חצי ממדינת ישראל, אבל חיים בה כמעט פי שניים אנשים.',
+       'ככל שנוסעים צפונה השדות נהיים גדולים יותר והבתים רחוקים יותר. דרנטה היא המחוז השקט של הולנד.'],
+    q:'איזה חלק של החופשה הכי אהבתם עד עכשיו — ולמה דווקא אותו? אחד אומר, השאר מנחשים לפניו מה הוא הולך להגיד.'},
+  {n:15, day:'יום 18',            name:'חיטהורן',                 stamp:'ספרתי גשרים',              e:'🛶', nav:'Giethoorn',
+    f:['בכפר הישן אין כביש. הכול מתנהל בסירות ובגשרים קטנים — יש כאן יותר מ־150 גשרים.',
+       'האגמים סביב הכפר אינם טבעיים. אנשים חפרו כאן כבול לחימום, והבורות התמלאו במים.',
+       'הסירות נקראות "סירות לחישה" כי המנוע חשמלי וכמעט לא נשמע. אפשר לשמוע את הברווזים.',
+       'לכפר קוראים לפעמים "ונציה של הצפון" — אבל בוונציה יש כיכרות, וכאן יש בעיקר גינות.'],
+    q:'איך מביאים מקרר חדש לבית שאין אליו כביש? איך מגיעים לבית ספר? ומה קורה כשמישהו חולה?'},
+  {n:16, day:'ימים 19–20',        name:'הוף פאן סאקסן',           stamp:'ניצחתי בתחרות אחת',       e:'🏆', nav:'Hof van Saxen, Nooitgedacht',
+    f:['הבתים בנויים בסגנון "סקסוני" — בית חווה עם גג קש, שבו פעם גרו האנשים והפרות תחת קורת גג אחת. כך היה חם יותר בחורף.',
+       'גג קש הוא בידוד מצוין: קריר בקיץ, חמים בחורף. אבל אסור להתקרב אליו עם אש.',
+       'המילה "סאקסן" מגיעה משבט הסקסונים שחי כאן לפני יותר מאלף שנה — ומהם הגיע גם השם "אנגלו־סקסי".'],
+    q:'יום חופש בלי שום תוכנית — זה החלום או משעמם? כל אחד מתכנן שעה אחת של היום. באמת שלו, בלי התערבות.',
+    tip:'לחלק מהמגלשות צריך גובה 1.20 מ׳ ותעודת שחייה, ולשתיים יש גיל מינימום 8.'},
+  {n:17, day:'יום 20',            name:'המוזיאון הפתוח',          stamp:'סיפרתי יום בחיים',        e:'🚋', nav:'Nederlands Openluchtmuseum, Arnhem',
+    f:['פירקו כאן בתים אמיתיים מכל רחבי הולנד, סימנו כל קורה, והרכיבו אותם מחדש במקום הזה.',
+       'בתוך המוזיאון נוסעת חשמלית עתיקה אמיתית — אפשר לעלות עליה ולסייר.',
+       'יש אנשים שעובדים שם בעבודות שנעלמו: אופה בתנור עצים, נפח, כובסת. הם לא שחקנים — הם באמת יודעים לעשות את זה.'],
+    q:'אם היינו צריכים לחיות שבוע בבית מלפני 150 שנה — מה היה הכי חסר לנו? ומה דווקא לא היינו מתגעגעים אליו?'},
+  {n:18, day:'יום 20',            name:'אופניים לבנים — הפארק הלאומי', stamp:'עצרתי שלוש עצירות', e:'🚲', nav:'Nationaal Park De Hoge Veluwe',
+    f:['בכניסות הפארק עומדים אלפי אופניים לבנים. לוקחים בחינם, נוסעים, ומשאירים איפה שמסיימים. אין מנעול ואין תשלום.',
+       'יש גם אופניים בגודל ילדים ואופניים עם כיסא מאחור.',
+       'הפארק הוא שילוב נדיר של יער, חולות נודדים ובריכות — נוף שנראה כמו שלוש מדינות שונות באותו יום רכיבה.',
+       'יש בו מוזיאון תת־קרקעי שמראה מה קורה מתחת לאדמה: שורשים, חיות קטנות וחול שזז.'],
+    q:'אופניים חופשיים לכולם, בלי מנעול — זה יעבוד גם בעיר שלנו? מה צריך לקרות בין אנשים כדי שזה יעבוד?'},
+  {n:19, day:'גיבוי · מזג אוויר', name:'דוינרל',                  stamp:'עשיתי את שלוש המגלשות',   e:'💦', nav:'Duinrell, Wassenaar',
+    f:['"דוין" בהולנדית זה דיונה. הפארק בנוי בתוך חולות החוף, קרוב לים.',
+       'בתוכו נמצא טיקיבאד — אחד מפארקי המים המקורים הגדולים באירופה, עם עשרות מגלשות.',
+       'המקום התחיל כאחוזה פרטית של משפחת אצולה, שפתחה את הגנים שלה למבקרים לפני יותר ממאה שנה.',
+       'הרבה מהמתקנים בחוץ מופעלים בכוח שרירים — דוושות, משיכה בחבל, סיבוב. אתם המנוע.'],
+    q:'מה מהנה יותר — מתקן שעושה הכול בשבילך, או מתקן שאתה צריך להזיז בעצמך? ולמה דווקא ככה?',
+    tip:'לחלק מהמגלשות יש גובה מינימלי. שווה לבדוק בכניסה לפני שמבטיחים.'},
 ];
 
 // weather: dates + coordinates per station (n) — chip shows only for
@@ -365,6 +553,8 @@ let stamps = [];      // {family_id, station}
 let counters = [];    // {family_id, key, value}
 let myId = parseInt(localStorage.getItem('holland_family') || '0') || null;
 let busy = new Set(); // stations mid-flight
+let expanded = new Set(); // stations with open info panel (survives re-render)
+let bingo = new Set(JSON.parse(localStorage.getItem('holland_bingo') || '[]')); // local only
 
 const $ = id => document.getElementById(id);
 const famById = id => families.find(f => f.id === id);
@@ -430,10 +620,15 @@ function render() {
     const wchip = w
       ? `<div class="wx" dir="ltr"><span>${w.e}</span><span class="wt">${w.tmax}°</span><span>/ ${w.tmin}°</span>${w.pp != null ? `<span>· 💧${w.pp}%</span>` : ''}</div>`
       : '';
-    return `<div class="st ${mine ? 'done' : ''}" data-n="${st.n}">
+    const more = `<div class="more">
+        ${st.f ? `<div class="mh">💡 ידעת?</div><ul>${st.f.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+        ${st.q ? `<div class="mh">🤔 שאלה</div><div class="q">${esc(st.q)}</div>` : ''}
+        ${st.tip ? `<div class="tip">⚠️ ${esc(st.tip)}</div>` : ''}
+      </div>`;
+    return `<div class="st ${mine ? 'done' : ''} ${expanded.has(st.n) ? 'open' : ''}" data-n="${st.n}">
       <div class="icon">${st.e}</div>
       <div class="mid">
-        <div class="day">${esc(st.day)} · חותמת ${st.n}</div>
+        <div class="day">${esc(st.day)} · חותמת ${st.n} <span class="chev">▼</span></div>
         <div class="name">${esc(st.name)}</div>
         <div class="stamptext">„${esc(st.stamp)}”</div>
         <div class="navrow">
@@ -442,6 +637,7 @@ function render() {
           ${wchip}
         </div>
         <div class="dots">${dots}</div>
+        ${more}
       </div>
       <div class="seal">${mine ? '✔' : 'עוד לא<br>הוחתם'}</div>
     </div>`;
@@ -532,6 +728,21 @@ document.addEventListener('click', e => {
     if (st) toggleStamp(parseInt(st.dataset.n));
     return;
   }
+  const bc = e.target.closest('.bcell');
+  if (bc) {
+    const i = parseInt(bc.dataset.i);
+    if (bingo.has(i)) bingo.delete(i); else bingo.add(i);
+    localStorage.setItem('holland_bingo', JSON.stringify([...bingo]));
+    bc.classList.toggle('on', bingo.has(i));
+    return;
+  }
+  const stcard = e.target.closest('.st');
+  if (stcard) {
+    const n = parseInt(stcard.dataset.n);
+    if (expanded.has(n)) expanded.delete(n); else expanded.add(n);
+    stcard.classList.toggle('open', expanded.has(n));
+    return;
+  }
   const b = e.target.closest('[data-bump]');
   if (b) { bump(b.dataset.bump, parseInt(b.dataset.d)); return; }
   const opt = e.target.closest('.opt');
@@ -556,6 +767,14 @@ document.addEventListener('visibilitychange', () => {
 });
 setInterval(fetchAll, 45000);
 setInterval(fetchWeather, 3 * 3600 * 1000);
+
+const BINGO = ['טחנת רוח','פרה שחורה־לבנה','תעלה עם סירה','גשר מתרומם',
+  'מישהו עם 3 ילדים על אופניים','שדה פרחים','כלב בסל אופניים','גבינה עגולה ענקית',
+  'בית עם גג קש','אווז או ברווז חוצה כביש','כובע קש של נושא גבינה','שלט עם 3 מילים ארוכות',
+  'מכונת פופרטיס','טרקטור','נעל עץ (קלומפן)','שביל אופניים אדום'];
+document.getElementById('bingogrid').innerHTML = BINGO.map((t, i) =>
+  `<button class="bcell ${bingo.has(i) ? 'on' : ''}" data-i="${i}">${t}</button>`
+).join('');
 
 (async () => {
   fetchWeather();
